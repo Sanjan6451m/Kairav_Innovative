@@ -15,42 +15,34 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get form data
         const formData = new FormData(form);
 
-        // Send form data using fetch
-        fetch('http://localhost:8000/forms/contact.php', {
+        // Send form data using FormSubmit
+        fetch('https://formsubmit.co/ajax/sanjan.m@softcons.net', {
             method: 'POST',
-            body: formData
+            body: formData,
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
         })
         .then(response => {
             if (!response.ok) {
-                return response.text().then(text => {
-                    try {
-                        return JSON.parse(text);
-                    } catch (e) {
-                        throw new Error('Server error: ' + text);
-                    }
-                });
+                throw new Error('Network response was not ok');
             }
-            return response.text().then(text => {
-                try {
-                    return JSON.parse(text);
-                } catch (e) {
-                    throw new Error('Invalid JSON response: ' + text);
-                }
-            });
+            return response.json();
         })
         .then(data => {
             loading.style.display = 'none';
             
-            if (data.status === 'success') {
+            if (data.success) {
                 sentMessage.style.display = 'block';
                 form.reset();
             } else {
-                throw new Error(data.message || 'Unknown error occurred');
+                throw new Error(data.message || 'Failed to send message');
             }
         })
         .catch(error => {
             loading.style.display = 'none';
-            errorMessage.textContent = error.message || 'An error occurred. Please try again later.';
+            errorMessage.textContent = 'An error occurred. Please try again later.';
             errorMessage.style.display = 'block';
             console.error('Form submission error:', error);
         });
