@@ -38,4 +38,41 @@
   $contact->add_message( $_POST['message'], 'Message', 10);
 
   echo $contact->send();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $subject = $_POST['subject'];
+    $message = $_POST['message'];
+    
+    $to = "sanjan.m@softcons.net";
+    $email_subject = "New Contact Form Submission from Kairav Innovative Website";
+    
+    // Email content
+    $email_content = "Name: $name\n";
+    $email_content .= "Email: $email\n\n";
+    $email_content .= "Subject: $subject\n\n";
+    $email_content .= "Message:\n$message\n";
+    
+    // Email headers
+    $headers = "From: $name <$email>";
+    
+    // Send email
+    if(mail($to, $email_subject, $email_content, $headers)) {
+        $response = array(
+            'status' => 'success',
+            'message' => 'Thank you for your message. We will get back to you soon!'
+        );
+    } else {
+        $response = array(
+            'status' => 'error',
+            'message' => 'Sorry, there was an error sending your message. Please try again later.'
+        );
+    }
+    
+    // Return JSON response
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit;
+}
 ?>
