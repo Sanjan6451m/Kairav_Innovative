@@ -16,17 +16,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
 
         // Send form data using fetch
-        fetch(form.action, {
+        fetch('http://localhost:8000/forms/contact.php', {
             method: 'POST',
             body: formData
         })
         .then(response => {
             if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Server error occurred');
+                return response.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        throw new Error('Server error: ' + text);
+                    }
                 });
             }
-            return response.json();
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Invalid JSON response: ' + text);
+                }
+            });
         })
         .then(data => {
             loading.style.display = 'none';
