@@ -12,8 +12,12 @@ document.addEventListener('DOMContentLoaded', function() {
         errorMessage.style.display = 'none';
         sentMessage.style.display = 'none';
 
-        // Get form data
+        // Add FormSubmit parameters
         const formData = new FormData(form);
+        formData.append('_subject', 'New Contact Form Submission from Kairav Innovative Website');
+        formData.append('_template', 'table');
+        formData.append('_next', window.location.href);
+        formData.append('_captcha', 'false');
 
         // Send form data using FormSubmit
         fetch('https://formsubmit.co/ajax/sanjan.m@softcons.net', {
