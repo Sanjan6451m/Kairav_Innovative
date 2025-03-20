@@ -20,7 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Server error occurred');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             loading.style.display = 'none';
             
@@ -28,14 +35,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 sentMessage.style.display = 'block';
                 form.reset();
             } else {
-                errorMessage.textContent = data.message;
-                errorMessage.style.display = 'block';
+                throw new Error(data.message || 'Unknown error occurred');
             }
         })
         .catch(error => {
             loading.style.display = 'none';
-            errorMessage.textContent = 'An error occurred. Please try again later.';
+            errorMessage.textContent = error.message || 'An error occurred. Please try again later.';
             errorMessage.style.display = 'block';
+            console.error('Form submission error:', error);
         });
     });
 }); 
